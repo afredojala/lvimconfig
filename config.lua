@@ -92,81 +92,6 @@ lvim.builtin.treesitter.ensure_installed = {
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enable = true
 
--- generic LSP settings
-
--- -- make sure server will always be installed even if the server is in skipped_servers list
--- lvim.lsp.installer.setup.ensure_installed = {
---     "sumneko_lua",
---     "jsonls",
--- }
--- -- change UI setting of `LspInstallInfo`
--- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
--- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
--- lvim.lsp.installer.setup.ui.border = "rounded"
--- lvim.lsp.installer.setup.ui.keymaps = {
---     uninstall_server = "d",
---     toggle_server_expand = "o",
--- }
-
--- ---@usage disable automatic installation of servers
--- lvim.lsp.installer.setup.automatic_installation = false
-
--- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
--- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
--- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
--- local opts = {} -- check the lspconfig documentation for a list of all possible options
--- require("lvim.lsp.manager").setup("pyright", opts)
-
--- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
--- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
--- lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
---   return server ~= "emmet_ls"
--- end, lvim.lsp.automatic_configuration.skipped_servers)
-
--- -- you can set a custom on_attach function that will be used for all the language servers
--- -- See <https://github.com/neovim/nvim-lspconfig#keybindings-and-completion>
--- lvim.lsp.on_attach_callback = function(client, bufnr)
---   local function buf_set_option(...)
---     vim.api.nvim_buf_set_option(bufnr, ...)
---   end
---   --Enable completion triggered by <c-x><c-o>
---   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
--- end
-
--- -- set a formatter, this will override the language server formatting capabilities (if it exists)
--- local formatters = require "lvim.lsp.null-ls.formatters"
--- formatters.setup {
---   { command = "black", filetypes = { "python" } },
---   { command = "isort", filetypes = { "python" } },
---   {
---     -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
---     command = "prettier",
---     ---@usage arguments to pass to the formatter
---     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
---     extra_args = { "--print-with", "100" },
---     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
---     filetypes = { "typescript", "typescriptreact" },
---   },
--- }
-
--- -- set additional linters
--- local linters = require "lvim.lsp.null-ls.linters"
--- linters.setup {
---   { command = "flake8", filetypes = { "python" } },
---   {
---     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
---     command = "shellcheck",
---     ---@usage arguments to pass to the formatter
---     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
---     extra_args = { "--severity", "warning" },
---   },
---   {
---     command = "codespell",
---     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
---     filetypes = { "javascript", "python" },
---   },
--- }
-
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 vim.api.nvim_create_autocmd("BufEnter", {
@@ -174,32 +99,17 @@ vim.api.nvim_create_autocmd("BufEnter", {
   -- enable wrap mode for json files only
   command = "setlocal wrap",
 })
--- vim.api.nvim_create_autocmd("FileType", {
---   pattern = "zsh",
---   callback = function()
---     -- let treesitter use bash highlight for zsh files as well
---     require("nvim-treesitter.highlight").attach(0, "bash")
---   end,
--- })
-lvim.lsp.diagnostics.virtual_text = false
+
+vim.diagnostic.config({
+  virtual_text = false,
+})
+
 lvim.builtin.terminal.active = true
 
 -- All the treesitter parsers you want to install. If you want all of them, just
 -- replace everything with "all".
 lvim.builtin.treesitter.ensure_installed = {
   "python",
-}
-
--- Set a formatter.
-local formatters = require "lvim.lsp.null-ls.formatters"
-formatters.setup {
-  { command = "black", filetypes = { "python" } },
-}
-
--- Set a linter.
-local linters = require "lvim.lsp.null-ls.linters"
-linters.setup {
-  { command = "flake8", filetypes = { "python" } },
 }
 
 -- TODO: debugpy installed by default
@@ -213,34 +123,6 @@ pcall(function() require("dap-python").setup(mason_path .. "packages/debugpy/ven
 -- neither are present it defaults to unittest.
 pcall(function() require("dap-python").test_runner = "pytest" end)
 
--- -- Magma Setup
-
--- -- Image options. Other options:
--- -- 1. none:     Don't show images.
--- -- 2. ueberzug: use Ueberzug to display images.
--- -- 3. kitty:    use the Kitty protocol to display images.
--- vim.g.magma_image_provider = "kitty"
-
--- pcall(function() require("magma").setup() end)
-
--- -- If this is set to true, then whenever you have an active cell its output
--- -- window will be automatically shown.
--- vim.g.magma_automatically_open_output = true
-
--- -- If this is true, then text output in the output window will be wrapped.
--- vim.g.magma_wrap_output = false
-
--- -- If this is true, then the output window will have rounded borders.
--- vim.g.magma_output_window_borders = false
-
--- -- The highlight group to be used for highlighting cells.
--- vim.g.magma_cell_highlight_group = "CursorLine"
-
--- -- Where to save/load with :MagmaSave and :MagmaLoad.
--- -- The generated file is placed in this directory, with the filename itself
--- -- being the buffer's name, with % replaced by %% and / replaced by %, and
--- -- postfixed with the extension .json.
--- vim.g.magma_save_path = vim.fn.stdpath "data" .. "/magma"
 
 -- -- Mappings
 lvim.builtin.which_key.mappings["dm"] = { "<cmd>lua require('dap-python').test_method()<cr>", "Test Method" }
@@ -250,22 +132,6 @@ lvim.builtin.which_key.vmappings["d"] = {
   s = { "<cmd>lua require('dap-python').debug_selection()<cr>", "Debug Selection" },
 }
 
--- lvim.builtin.which_key.mappings["j"] = {
---   name = "Jupyter",
---   i = { "<Cmd>MagmaInit<CR>", "Init Magma" },
---   d = { "<Cmd>MagmaDeinit<CR>", "Deinit Magma" },
---   e = { "<Cmd>MagmaEvaluateLine<CR>", "Evaluate Line" },
---   r = { "<Cmd>MagmaReevaluateCell<CR>", "Re evaluate cell" },
---   D = { "<Cmd>MagmaDelete<CR>", "Delete cell" },
---   s = { "<Cmd>MagmaShowOutput<CR>", "Show Output" },
---   R = { "<Cmd>MagmaRestart!<CR>", "Restart Magma" },
---   S = { "<Cmd>MagmaSave<CR>", "Save" },
--- }
-
--- lvim.builtin.which_key.vmappings["j"] = {
---   name = "Jupyter",
---   e = { "<esc><cmd>MagmaEvaluateVisual<cr>", "Evaluate Highlighted Line" },
--- }
 
 lvim.builtin.which_key.mappings["P"] = {
   name = "Python",
@@ -285,7 +151,7 @@ formatters.setup {
 
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-  { command = "flake8" },
+  { command = "ruff" },
   {
     command = "shellcheck",
     args = { "--severity", "warning" },
@@ -321,4 +187,57 @@ lvim.plugins = {
   },
   -- You can run blocks of code like jupyter notebook.
   "dccsillag/magma-nvim",
+  {
+    "zbirenbaum/copilot-cmp",
+    event = "InsertEnter",
+    dependencies = { "zbirenbaum/copilot.lua" },
+    config = function()
+      vim.defer_fn(function()
+        require("copilot").setup({
+          panel = {
+            enabled = true,
+            auto_refresh = false,
+            keymap = {
+              jump_prev = "[[",
+              jump_next = "]]",
+              accept = "<CR>",
+              refresh = "gr",
+              open = "<M-CR>"
+            },
+            layout = {
+              position = "bottom", -- | top | left | right
+              ratio = 0.4
+            },
+          },
+          suggestion = {
+            enabled = true,
+            auto_trigger = true,
+            debounce = 75,
+            keymap = {
+              accept = "<M-l>",
+              accept_word = false,
+              accept_line = false,
+              next = "<M-]>",
+              prev = "<M-[>",
+              dismiss = "<C-]>",
+            },
+          },
+          filetypes = {
+            yaml = false,
+            markdown = false,
+            help = false,
+            gitcommit = false,
+            gitrebase = false,
+            hgcommit = false,
+            svn = false,
+            cvs = false,
+            ["."] = false,
+          },
+          copilot_node_command = 'node', -- Node.js version must be > 16.x
+          server_opts_overrides = {},
+        })                               -- https://github.com/zbirenbaum/copilot.lua/blob/master/README.md#setup-and-configuration
+        require("copilot_cmp").setup()   -- https://github.com/zbirenbaum/copilot-cmp/blob/master/README.md#configuration
+      end, 100)
+    end,
+  }
 }
