@@ -164,7 +164,18 @@ linters.setup {
 -- Additional Plugins
 lvim.plugins = {
   -- You can switch between vritual environmnts.
-  "AckslD/swenv.nvim",
+  {
+    "AckslD/swenv.nvim",
+    config = function()
+      require("swenv").setup({
+        get_venvs = function(venvs_path)
+          return require('swenv.api').get_venvs(venvs_path)
+        end,
+        venvs_path = vim.fn.expand('~/Library/Caches/pypoetry/virtualenvs'),
+        post_set_venv = nil,
+      })
+    end
+  },
   "mfussenegger/nvim-dap-python",
   "folke/trouble.nvim",
   cmd = "TroubleToggle",
