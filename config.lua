@@ -12,6 +12,7 @@ an executable
 lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.colorscheme = "lunar"
+vim.opt.clipboard = "unnamedplus"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 --
@@ -106,11 +107,6 @@ vim.diagnostic.config({
 
 lvim.builtin.terminal.active = true
 
--- All the treesitter parsers you want to install. If you want all of them, just
--- replace everything with "all".
-lvim.builtin.treesitter.ensure_installed = {
-  "python",
-}
 
 -- TODO: debugpy installed by default
 -- Setup dap for python
@@ -154,6 +150,7 @@ linters.setup {
   { command = "ruff" },
   {
     command = "shellcheck",
+    filetypes = { ".sh" },
     args = { "--severity", "warning" },
   },
   {
@@ -171,10 +168,19 @@ lvim.plugins = {
         get_venvs = function(venvs_path)
           return require('swenv.api').get_venvs(venvs_path)
         end,
-        venvs_path = vim.fn.expand('~/Library/Caches/pypoetry/virtualenvs'),
+        venvs_path = vim.fn.expand('~/.cache/pypoetry/virtualenvs/'),
         post_set_venv = nil,
       })
     end
+  },
+  -- Markdown Preview
+  {
+    "iamcco/markdown-preview.nvim",
+    build = "cd app && npm install",
+    ft = "markdown",
+    config = function()
+      vim.g.mkdp_auto_start = 0
+    end,
   },
   "mfussenegger/nvim-dap-python",
   "folke/trouble.nvim",
